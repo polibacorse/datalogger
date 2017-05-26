@@ -12,7 +12,7 @@ TOPICS = [
 	'$SYS/raw'
 ]
 
-button_pressed = True # CHANGE CHANGE CHANGE 
+button_pressed = False 
 logs = {
 	'general': None,
 	'gps': None
