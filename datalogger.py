@@ -8,11 +8,12 @@ import struct
 ROOT_PATH = '/home/pi/PC5_log'
 TOPICS = [
 	'$SYS/formatted/datalog_on-off', 
-	'$SYS/formatted/lap_finished', 
+	'$SYS/formatted/lap_close', 
 	'$SYS/raw'
 ]
 
 button_pressed = False 
+ref_time = 0
 logs = {
 	'general': None,
 	'gps': None
@@ -20,9 +21,14 @@ logs = {
 
 path = None
 
+def millis():
+    return int(round(time.time() * 1000))
+
 def log(json_msg):
 	msg = json.loads(json_msg)
-	payload = struct.pack('<hq8i', msg['id'], msg['time'], *msg['data'])
+    arrive_time = int(msg['time'])
+    relative_time = str(arrive_time - ref_time)
+	payload = struct.pack('<hq8i', msg['id'], relative_time, *msg['data'])
 
 	# check if message is from GPS
 	# see Documentation for additional info
@@ -41,8 +47,12 @@ def update_button_pressed(json_msg):
 		button_pressed = False
 
 def update_lap_state(json_msg):
-	msg = json.loads(json_msg)
+	global ref_time
+
+    msg = json.loads(json_msg)
 	state = int(msg['data'])
+
+    ref_time = millis()
 
 	if state:
 		tini_files()
@@ -118,7 +128,10 @@ def tini_files():
 			pass
 
 def main():
+    global ref_time
 	global path
+
+    ref_time = millis()
 	path = init_path(ROOT_PATH)
 	init_files(path)
 	init_mqtt()
