@@ -7,9 +7,9 @@ import struct
 
 ROOT_PATH = '/home/pi/PC5_log'
 TOPICS = [
-	'$SYS/formatted/datalog_on-off', 
-	'$SYS/formatted/lap_close', 
-	'$SYS/raw'
+	'data/formatted/datalog_on-off', 
+	'data/formatted/lap_close', 
+	'data/raw'
 ]
 
 button_pressed = False 
